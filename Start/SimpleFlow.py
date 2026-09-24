@@ -1,7 +1,7 @@
 import numpy as np
 
+np.random.seed(42) # This sets the seed for randomization so eveyone that tries the code gets the same results with random weights and biases
 X = np.random.randn(1,784)
-np.random.seed(42)
 
 class Layer_Dense:
     def __init__(self, n_inputs, n_nuerons):
@@ -16,8 +16,11 @@ class Activation_ReLu:
     def forward(self, inputs):
         self.output = np.maximum(0, inputs)
 
-
-
+class Activation_SoftMax:
+    def forward(self, inputs):
+        exp_val = np.exp(inputs) 
+        predictions = exp_val / np.sum(exp_val, axis=1, keepdims=True)
+        self.output = predictions
 
 # Input Layer
 inputLayer = Layer_Dense(784, 784)
@@ -40,6 +43,6 @@ Hactivatoin2.forward(HLayer2.output)
 #Output Layer
 OutputLayer = Layer_Dense(16, 10)
 OutputLayer.forward(Hactivatoin2.output)
-print(OutputLayer.output)
-
-print(OutputLayer.output)
+OutActivation = Activation_SoftMax()
+OutActivation.forward(OutputLayer.output)
+print(OutActivation.output)
