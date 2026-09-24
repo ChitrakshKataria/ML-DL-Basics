@@ -17,6 +17,8 @@ class Activation_ReLu:
         self.output = np.maximum(0, inputs)
 
 
+
+
 # Input Layer
 inputLayer = Layer_Dense(784, 784)
 inputLayer.forward(X)
@@ -40,3 +42,4 @@ OutputLayer = Layer_Dense(16, 10)
 OutputLayer.forward(Hactivatoin2.output)
 print(OutputLayer.output)
 
+print(OutputLayer.output)
