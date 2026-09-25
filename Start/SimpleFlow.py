@@ -1,7 +1,21 @@
 import numpy as np
+from sklearn.datasets import fetch_openml
+np.random.seed(42)
 
-np.random.seed(42) # This sets the seed for randomization so eveyone that tries the code gets the same results with random weights and biases
-X = np.random.randn(1,784)
+# Importing the minist handdrawn numbers data set
+X, y = fetch_openml(
+    "mnist_784",
+    version=1,
+    return_X_y=True,
+    as_frame=False,
+    parser="liac-arff"
+)
+X = X / 255 # Converting pixeles from 0 -> 255 to 0 -> 1
+y = y.astype(int)
+
+# print(X.shape, y.shape)
+# print(y[:10], X[:10])
+
 
 class Layer_Dense:
     def __init__(self, n_inputs, n_nuerons):
@@ -22,9 +36,17 @@ class Activation_SoftMax:
         predictions = exp_val / np.sum(exp_val, axis=1, keepdims=True)
         self.output = predictions
 
+class Loss:
+    def calculate(self, predictions, lables):
+        correct_probability = predictions[0, lables[0]]
+        loss = -np.log(correct_probability)
+        self.output = loss
+
+    
+
 # Input Layer
 inputLayer = Layer_Dense(784, 784)
-inputLayer.forward(X)
+inputLayer.forward(X[:1]) #Passing only the first smple
 activatoin1 = Activation_ReLu()
 activatoin1.forward(inputLayer.output)
 
@@ -45,4 +67,7 @@ OutputLayer = Layer_Dense(16, 10)
 OutputLayer.forward(Hactivatoin2.output)
 OutActivation = Activation_SoftMax()
 OutActivation.forward(OutputLayer.output)
-print(OutActivation.output)
+# print(OutActivation.output)
+loss = Loss()
+loss.calculate(OutActivation.output, y)
+print(loss.output)
