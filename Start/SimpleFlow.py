@@ -38,15 +38,17 @@ class Activation_SoftMax:
 
 class Loss:
     def calculate(self, predictions, lables):
-        correct_probability = predictions[0, lables[0]]
+        predictions = np.clip(predictions, 1e-7, 1 - 1e-7) # There was a problem with taking the log(0) which is equal to infinity so we just dont allow the predictions to go to 0 we clip them before that
+        samples = len(predictions)
+        correct_probability = predictions[np.arange(samples), lables[:samples]]
         loss = -np.log(correct_probability)
-        self.output = loss
+        self.output = np.mean(loss)
 
     
 
 # Input Layer
 inputLayer = Layer_Dense(784, 784)
-inputLayer.forward(X[:1]) #Passing only the first smple
+inputLayer.forward(X:[20]) #Passing only the first 20 samples
 activatoin1 = Activation_ReLu()
 activatoin1.forward(inputLayer.output)
 
