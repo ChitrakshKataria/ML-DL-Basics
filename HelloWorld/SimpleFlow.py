@@ -34,16 +34,16 @@ class Layer_Dense:
         self.inputs = inputs
         self.output = np.dot(inputs, self.weights) + self.biases
     def backward(self, dvalues):
-        self.dweights = np.dot(dvalues, self.inputs)
-        self.dbiases = np.sum(dvalues, axis=1, keepdims=True)
-        self.dinputs = np.dot(self.weights.T, dvalues)
+        self.dweights = np.dot(self.inputs.T, dvalues)
+        self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
+        self.dinputs = np.dot(dvalues, self.weights.T)
 
 class Activation_ReLu:
     def forward(self, inputs):
         self.inputs = inputs
         self.output = np.maximum(0, inputs)
     def backward(self, dvalues):
-        self.dvalues = dvalues.copy()
+        self.dinputs = dvalues.copy()
         self.dinputs[self.inputs <= 0] = 0
 
 
@@ -52,7 +52,7 @@ class Activation_SoftMax:
         exp_val = np.exp(inputs) 
         predictions = exp_val / np.sum(exp_val, axis=1, keepdims=True)
         self.output = predictions
-    def backward(self, dvalues, lables):
+    def backward(self, lables):
         sample = len(self.output)
         self.dinputs = self.output.copy()
         self.dinputs[np.arange(sample), lables] -= 1
@@ -71,35 +71,105 @@ class Accuracy:
         self.output = np.mean(max_prediction == lables)
         
 
-    
 
-# Input Layer
-inputLayer = Layer_Dense(784, 784)
-inputLayer.forward(X_train) #Passing only the first 20 samples
-activatoin1 = Activation_ReLu()
-activatoin1.forward(inputLayer.output)
+# Initializing Layers (The architecture)
+layer1 = Layer_Dense(784, 24)
+activation1 = Activation_ReLu()
 
-#Hiden Layer 1
-HLayer1 = Layer_Dense(784, 16)
-HLayer1.forward(activatoin1.output)
-Hactivatoin1 = Activation_ReLu()
-Hactivatoin1.forward(HLayer1.output)
+layer2 = Layer_Dense(24,24)
+activation2 = Activation_ReLu()
 
-#Hiden Layer 2
-HLayer2 = Layer_Dense(16, 16)
-HLayer2.forward(Hactivatoin1.output)
-Hactivatoin2 = Activation_ReLu()
-Hactivatoin2.forward(HLayer2.output)
+layer3 = Layer_Dense(24, 24)
+activation3 = Activation_ReLu()
 
-#Output Layer
-OutputLayer = Layer_Dense(16, 10)
-OutputLayer.forward(Hactivatoin2.output)
-OutActivation = Activation_SoftMax()
-OutActivation.forward(OutputLayer.output)
-# print(OutActivation.output)
+OutputLayer = Layer_Dense(24, 10)
+SoftMax = Activation_SoftMax()
+
 loss = Loss()
-loss.calculate(OutActivation.output, y_train)
-# print(loss.output)
-acc = Accuracy()
-acc.calculate(OutActivation.output, y_train)
-print(acc.output)
+
+
+
+#Training loop (SGD):
+epochs = 10
+batch_size = 50
+learning_rate = 0.01
+
+for epoch in range(epochs):
+    indices = np.arange(len(X_train))
+    np.random.shuffle(indices)
+
+    X_train = X_train[indices]
+    y_train = y_train[indices]
+
+    for start in range(0, len(X_train), batch_size):
+        end = start + batch_size
+
+        X_batch = X_train[start:end]
+        y_batch = y_train[start:end]
+
+        # Forward Propogation
+        layer1.forward(X_batch)
+        activation1.forward(layer1.output)
+
+        layer2.forward(activation1.output)
+        activation2.forward(layer2.output)
+
+        layer3.forward(activation2.output)
+        activation3.forward(layer3.output)
+
+        OutputLayer.forward(activation3.output)
+        SoftMax.forward(OutputLayer.output)
+
+        # Loss
+        loss.calculate(SoftMax.output, y_batch)
+
+        #Backpropogation
+        SoftMax.backward(y_batch)
+
+        OutputLayer.backward(SoftMax.dinputs)
+
+        activation3.backward(OutputLayer.dinputs)
+        layer3.backward(activation3.dinputs)
+
+        activation2.backward(layer3.dinputs)
+        layer2.backward(activation2.dinputs)
+
+        activation1.backward(layer2.dinputs)
+        layer1.backward(activation1.dinputs)
+
+        # Updating the weights
+        layer1.weights -= learning_rate * layer1.dweights
+        layer1.biases -= learning_rate * layer1.dbiases
+
+        layer2.weights -= learning_rate * layer2.dweights
+        layer2.biases -= learning_rate * layer2.dbiases
+
+        layer3.weights -= learning_rate * layer3.dweights
+        layer3.biases -= learning_rate * layer3.dbiases
+
+        OutputLayer.weights -= learning_rate * OutputLayer.dweights
+        OutputLayer.biases -= learning_rate * OutputLayer.dbiases
+
+    # Training performance:
+    layer1.forward(X_train)
+    activation1.forward(layer1.output)
+    
+    layer2.forward(activation1.output)
+    activation2.forward(layer2.output)
+
+    layer3.forward(activation2.output)
+    activation3.forward(layer3.output)
+
+    OutputLayer.forward(activation3.output)
+    SoftMax.forward(OutputLayer.output)
+
+    loss.calculate(SoftMax.output, y_train)
+
+    prediction = np.argmax(SoftMax.output, axis=1)
+    accuracy = np.mean(prediction == y_train)
+
+    print(
+        f"Epoch: {epoch + 1}/{epoch}"
+        f"Loss: {loss.output}"
+        f"Accuracy: {accuracy}"
+    )
