@@ -12,7 +12,6 @@ X, y = fetch_openml(
 X = X / 255 # Converting pixeles from 0 -> 255 to 0 -> 1
 y = y.astype(int)
 
-
 # Training and Testing Split 80:20 :
 split_index = int(len(X) * 0.8)
 
@@ -45,7 +44,7 @@ class Activation_ReLu:
         self.output = np.maximum(0, inputs)
     def backward(self, dvalues):
         self.dvalues = dvalues.copy()
-        self.dinputs(self.inputs <= 0) = 0
+        self.dinputs[self.inputs <= 0] = 0
 
 
 class Activation_SoftMax:
