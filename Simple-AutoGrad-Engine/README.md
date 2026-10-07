@@ -8,4 +8,4 @@ The goal was to lean how a more complex autograd engines works by making a small
 It works by tracking/remembering how eatch scaler came to be and by what operations, so later on when appling the chain rule to find the partial derivative of the loss function with respect to the scalar becomes a simple and much more automated task.
 
 ## Limitations
-For now it is only compatable with scalars and dose not suport more complex operations like Matrix-Multiplications, Log, Exponent.
+For now it is only compatable with scalars and dose not suport more complex operations like Matrix-Multiplications, Log, Exponent etc...
