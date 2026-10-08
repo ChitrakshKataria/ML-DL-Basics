@@ -1,20 +1,43 @@
-# Hello-World on PyTorch
-This is a translation of my Hello World project, the only diffrence is that this one is created with PyTorch. Just as that project this one uses the `mnist` 28x28 dataset of hand drawn images. On which the model learns patterns and learns to recognise new nver seen before handrawn numbers.
+# Hello World on PyTorch
 
-## Activation functions
-The project makes use of ReLu activation function on the hidden layers to allow the NN. (Neural Network) to learn in a non-linear way, the consequence of that is a NN that can better adapt pattern in the input images. I also make use of the SoftMax function on the output layer (With the corss-entropy loss function). This is important because all the predictions on the output layer need to equal to 1.
+This is a PyTorch version of my original Hello World neural network project. Just like the original, this project uses the MNIST dataset, which contains 28×28 pixel images of handwritten digits.
 
-## Backpropogatoin
-All the backpropogation is handeld by PyTorch's Autograd engine. It works just like my mini autograd engine project just the diffrence being PyTorchs's autoggrad engien is much more smarter and optimized.
+The model learns patterns from these images and uses what it has learned to recognize handwritten digits it has never seen before.
+
+## Activation Functions
+
+The project uses the **ReLU (Rectified Linear Unit)** activation function in the hidden layers. ReLU introduces non-linearity, allowing the neural network to learn more complex patterns in the input images. The output layer produces 10 raw scores, one for each digit (0–9). During training, I use **Cross-Entropy Loss**, which internally applies LogSoftmax. This means I don't need to apply Softmax separately in the model.
+
+## Backpropagation
+
+All backpropagation is handled by PyTorch's **Autograd engine**.
+
+It works on the same fundamental principles as my own mini autograd engine project. The difference is that PyTorch's Autograd is much more optimized and supports more complex operations.
+
+Autograd automatically calculates the gradients of the loss with respect to the model's weights and biases.
 
 ## Optimizer
-This project is using **Mini-Batch Stochastic Gradient Descent (SGD)** to actualy update the weights and biases that are calculated in the backpropogation process.
+
+This project uses **Mini-Batch Stochastic Gradient Descent (SGD)** to update the weights and biases of the neural network. The dataset is divided into smaller batches of 50 images. For each batch, the model makes predictions, calculates the loss, and performs backpropagation. The SGD optimizer then uses the calculated gradients and the learning rate to update the model's parameters, gradually reducing the loss.
 
 ## Loss
-I decided to go with the **Cross-Entropy Loss function** for this project, as it works best with the softmax prediction on the output layer of the neural network. 
+
+I decided to use the **Cross-Entropy Loss function** because this is a multi-class classification problem with 10 possible classes (digits 0–9). Cross-Entropy measures how well the model's predictions match the correct labels. PyTorch's `nn.CrossEntropyLoss()` combines LogSoftmax and Negative Log-Likelihood Loss into one function.
 
 ## Final
-The result is a DeepLearning model that can find patterns in handrawn numbers and teach it self to predict never seen before hand written numbers.
+
+The result is a deep learning model trained to recognize handwritten digits. Through training, the neural network learns patterns from labeled images and can use those patterns to predict digits in new, previously unseen images.
 
 ## Structure
 This is how the neural network looks like for this project:
+
+
+**Training configuration:**
+- Framework: PyTorch
+- Dataset: MNIST
+- Training/Test Split: 80% / 20%
+- Optimizer: Mini-Batch SGD
+- Learning Rate: 0.1
+- Batch Size: 50
+- Epochs: 20
+- Loss Function: Cross-Entropy Loss

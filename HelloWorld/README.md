@@ -18,3 +18,14 @@ The result is a DeepLearning model that can find patterns in handrawn numbers an
 
 ## Structure
 This is how the neural network looks like for this project:
+
+
+**Training configuration:**
+- Framework: N/A (Pure Python)
+- Dataset: MNIST
+- Training/Test Split: 80% / 20%
+- Optimizer: Mini-Batch SGD
+- Learning Rate: 0.01
+- Batch Size: 50
+- Epochs: 20
+- Loss Function: Cross-Entropy Loss
