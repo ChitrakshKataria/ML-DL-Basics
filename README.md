@@ -1,6 +1,6 @@
-# Deep Learning / Machine learning Basics
+# Deep Learning / Machine Learning Basics
 
-Everything in this repo was buildt without the use of AI, AI was used only as a supporting tool. This is a collection/log of some basic neural networks / DeepLearning models i wrote in both PyTorch and pure Pyhton. The goal with this is to understand the underlying math and concepts behing neural networks.
+Everything in this repo was built without the use of AI, AI was used only as a supporting tool. This is a collection/log of some basic neural networks / deep learning models I wrote in both PyTorch and pure Pyhton. The goal with this is to understand the underlying math and concepts behind neural networks.
 
 ## Licence
 This repository is licensed under the MIT Licence
